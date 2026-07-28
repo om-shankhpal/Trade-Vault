@@ -4,6 +4,7 @@ export const registerValidator = [
   body("fullName")
     .trim()
     .notEmpty()
+    .isLength({ max: 50 })
     .withMessage("Full name is required"),
 
   body("email")

@@ -3,13 +3,15 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import { registerUser } from "./auth.service.js";
 
 export const register = asyncHandler(async (req, res) => {
-  const user = await registerUser(req.body);
+  const { fullName, email, password } = req.body;
 
-  res.status(201).json(
-    new ApiResponse(
-      201,
-      "User registered successfully",
-      user
-    )
-  );
+  const user = await registerUser({
+    fullName,
+    email,
+    password,
+  });
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, "User registered successfully", user));
 });

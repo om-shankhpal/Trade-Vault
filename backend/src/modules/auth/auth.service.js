@@ -9,7 +9,10 @@ export const registerUser = async ({ fullName, email, password }) => {
     throw new ApiError(409, "Email is already registered");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(
+    password,
+    Number(process.env.BCRYPT_SALT_ROUNDS),
+  );
 
   const user = await User.create({
     fullName,
@@ -18,7 +21,7 @@ export const registerUser = async ({ fullName, email, password }) => {
   });
 
   return {
-    id: user._id,
+    id: user.id,
     fullName: user.fullName,
     email: user.email,
     profilePicture: user.profilePicture,
