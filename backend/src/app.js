@@ -1,4 +1,5 @@
 import express from "express";
+import errorHandler from "./middleware/error.middleware.js";
 
 const app = express();
 
@@ -11,5 +12,7 @@ app.get("/api/v1/health", (req, res) => {
     data: null,
   });
 });
+
+app.use(errorHandler);
 
 export default app;
