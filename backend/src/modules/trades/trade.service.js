@@ -1,6 +1,7 @@
 import Trade from "./trade.model.js";
 import { validateTradeBusinessRules } from "./trade-business-rules.js";
 import { calculateTradeMetrics } from "./trade-calculator.js";
+import { toTradeResponse } from "./trade.mapper.js";
 
 export const createTrade = async (tradeData, userId) => {
   validateTradeBusinessRules(tradeData);
@@ -13,34 +14,28 @@ export const createTrade = async (tradeData, userId) => {
     user: userId,
   });
 
+  return toTradeResponse(trade);
+};
+
+export const getTrades = async (userId, page = 1, limit = 10) => {
+  const skip = (page - 1) * limit;
+
+  const [trades, totalTrades] = await Promise.all([
+    Trade.find({ user: userId })
+      .sort({ tradeDate: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+
+    Trade.countDocuments({ user: userId }),
+  ]);
+
   return {
-    id: trade.id,
-    tradeDate: trade.tradeDate,
-    symbol: trade.symbol,
-    segment: trade.segment,
-    direction: trade.direction,
-    entryTime: trade.entryTime,
-    exitTime: trade.exitTime,
-    entryPrice: trade.entryPrice,
-    exitPrice: trade.exitPrice,
-    quantity: trade.quantity,
-    plannedStopLoss: trade.plannedStopLoss,
-    plannedTarget: trade.plannedTarget,
-    strategy: trade.strategy,
-    marketCondition: trade.marketCondition,
-    emotionEntry: trade.emotionEntry,
-    emotionDuring: trade.emotionDuring,
-    emotionExit: trade.emotionExit,
-    rulesFollowed: trade.rulesFollowed,
-    mistakes: trade.mistakes,
-    notes: trade.notes,
-    screenshots: trade.screenshots,
-    grossPnL: trade.grossPnL,
-    charges: trade.charges,
-    netPnL: trade.netPnL,
-    rMultiple: trade.rMultiple,
-    status: trade.status,
-    createdAt: trade.createdAt,
-    updatedAt: trade.updatedAt,
+    trades: trades.map(toTradeResponse),
+    pagination: {
+      page,
+      limit,
+      totalTrades,
+      totalPages: Math.ceil(totalTrades / limit),
+    },
   };
 };
