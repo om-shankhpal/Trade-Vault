@@ -1,4 +1,4 @@
-import { TRADE_DIRECTION, TRADE_STATUS } from "../../constants/trade.constants.js";
+import { TRADE_DIRECTION, TRADE_STATUS } from "./trade.constants.js";
 
 const round = (value) => Number(value.toFixed(2));
 

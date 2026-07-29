@@ -2,6 +2,7 @@ import express from "express";
 import errorHandler from "./middleware/error.middleware.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import profileRoutes from "./modules/profile/profile.routes.js";
+import tradeRoutes from "./modules/trades/trade.routes.js";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get("/api/v1/health", (req, res) => {
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/profile", profileRoutes);
+app.use("/api/v1/trades", tradeRoutes);
 
 app.use(errorHandler);
 
