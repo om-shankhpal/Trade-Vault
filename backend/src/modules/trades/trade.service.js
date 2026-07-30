@@ -86,3 +86,17 @@ export const updateTrade = async (tradeId, userId, tradeData) => {
 
   return toTradeResponse(trade);
 };
+
+// Delete a trade
+export const deleteTrade = async (tradeId, userId) => {
+  const trade = await Trade.findOne({
+    _id: tradeId,
+    user: userId,
+  });
+
+  if (!trade) {
+    throw new ApiError(404, "Trade not found");
+  }
+
+  await trade.deleteOne();
+};

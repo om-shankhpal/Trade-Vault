@@ -1,6 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import ApiResponse from "../../utils/ApiResponse.js";
-import { createTrade, getTrades, getTradeById, updateTrade } from "./trade.service.js";
+import { createTrade, getTrades, getTradeById, updateTrade, deleteTrade } from "./trade.service.js";
 
 // Create a new trade
 export const create = asyncHandler(async (req, res) => {
@@ -62,6 +62,22 @@ export const update = asyncHandler(async (req, res) => {
       200,
       "Trade updated successfully",
       trade
+    )
+  );
+});
+
+// Delete a trade by ID
+export const remove = asyncHandler(async (req, res) => {
+  await deleteTrade(
+    req.params.id,
+    req.user.id
+  );
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      "Trade deleted successfully",
+      null
     )
   );
 });
