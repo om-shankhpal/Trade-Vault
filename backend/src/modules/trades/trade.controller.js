@@ -1,6 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import ApiResponse from "../../utils/ApiResponse.js";
-import { createTrade, getTrades, getTradeById } from "./trade.service.js";
+import { createTrade, getTrades, getTradeById, updateTrade } from "./trade.service.js";
 
 // Create a new trade
 export const create = asyncHandler(async (req, res) => {
@@ -44,6 +44,23 @@ export const getById = asyncHandler(async (req, res) => {
     new ApiResponse(
       200,
       "Trade fetched successfully",
+      trade
+    )
+  );
+});
+
+// Update an existing trade
+export const update = asyncHandler(async (req, res) => {
+  const trade = await updateTrade(
+    req.params.id,
+    req.user.id,
+    req.body
+  );
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      "Trade updated successfully",
       trade
     )
   );

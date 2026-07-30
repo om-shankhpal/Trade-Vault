@@ -56,3 +56,33 @@ export const getTradeById = async (tradeId, userId) => {
 
   return toTradeResponse(trade);
 };
+
+// Update an existing trade
+export const updateTrade = async (tradeId, userId, tradeData) => {
+  const trade = await Trade.findOne({
+    _id: tradeId,
+    user: userId,
+  });
+
+  if (!trade) {
+    throw new ApiError(404, "Trade not found");
+  }
+
+  const updatedTradeData = {
+    ...trade.toObject(),
+    ...tradeData,
+  };
+
+  validateTradeBusinessRules(updatedTradeData);
+
+  const metrics = calculateTradeMetrics(updatedTradeData);
+
+  trade.set({
+    ...tradeData,
+    ...metrics,
+  });
+
+  await trade.save();
+
+  return toTradeResponse(trade);
+};
