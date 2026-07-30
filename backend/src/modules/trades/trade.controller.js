@@ -1,7 +1,8 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import ApiResponse from "../../utils/ApiResponse.js";
-import { createTrade, getTrades } from "./trade.service.js";
+import { createTrade, getTrades, getTradeById } from "./trade.service.js";
 
+// Create a new trade
 export const create = asyncHandler(async (req, res) => {
   const trade = await createTrade(req.body, req.user.id);
 
@@ -16,6 +17,7 @@ export const create = asyncHandler(async (req, res) => {
     );
 });
 
+// Get Trades with pagination
 export const getAll = asyncHandler(async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
@@ -27,6 +29,22 @@ export const getAll = asyncHandler(async (req, res) => {
       200,
       "Trades fetched successfully",
       data
+    )
+  );
+});
+
+// Get a single trade by ID
+export const getById = asyncHandler(async (req, res) => {
+  const trade = await getTradeById(
+    req.params.id,
+    req.user.id
+  );
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      "Trade fetched successfully",
+      trade
     )
   );
 });
