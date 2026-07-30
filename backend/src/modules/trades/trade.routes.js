@@ -6,6 +6,7 @@ import {
 } from "./trade.validation.js";
 import validate from "../../middleware/validate.middleware.js";
 import authenticate from "../../middleware/auth.middleware.js";
+import validateObjectId from "../../middleware/validateObjectId.middleware.js";
 
 const router = Router();
 
@@ -13,10 +14,10 @@ router.post("/", authenticate, createTradeValidator, validate, create);
 
 router.get("/", authenticate, getAll);
 
-router.get("/:id", authenticate, getById);
+router.get("/:id", authenticate, validateObjectId("id", "Trade"), getById);
 
-router.patch("/:id", authenticate, updateTradeValidator, validate, update);
+router.patch("/:id", authenticate, validateObjectId("id", "Trade"), updateTradeValidator, validate, update);
 
-router.delete("/:id", authenticate, remove);
+router.delete("/:id", authenticate, validateObjectId("id", "Trade"), remove);
 
 export default router;
