@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { query } from "express-validator";
 
 export const createTradeValidator = [
   body("tradeDate").isISO8601().withMessage("Trade date must be a valid date"),
@@ -174,4 +175,18 @@ export const updateTradeValidator = [
     .trim()
     .isLength({ max: 5000 })
     .withMessage("Notes cannot exceed 5000 characters"),
+];
+
+export const getTradesValidator = [
+  query("page")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Page must be at least 1")
+    .toInt(),
+
+  query("limit")
+    .optional()
+    .isInt({ min: 1, max: 100 })
+    .withMessage("Limit must be between 1 and 100")
+    .toInt(),
 ];

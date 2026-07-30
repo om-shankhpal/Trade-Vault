@@ -19,8 +19,7 @@ export const create = asyncHandler(async (req, res) => {
 
 // Get Trades with pagination
 export const getAll = asyncHandler(async (req, res) => {
-  const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 10;
+  const { page = 1, limit = 10 } = req.query;
 
   const data = await getTrades(req.user.id, page, limit);
 
