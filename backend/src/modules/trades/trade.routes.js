@@ -1,5 +1,12 @@
 import { Router } from "express";
-import { create, getAll, getById, update, remove } from "./trade.controller.js";
+import {
+  create,
+  getAll,
+  getById,
+  update,
+  remove,
+  uploadScreenshots,
+} from "./trade.controller.js";
 import {
   createTradeValidator,
   updateTradeValidator,
@@ -8,6 +15,7 @@ import {
 import validate from "../../middleware/validate.middleware.js";
 import authenticate from "../../middleware/auth.middleware.js";
 import validateObjectId from "../../middleware/validateObjectId.middleware.js";
+import upload from "../../middleware/upload.middleware.js";
 
 const router = Router();
 
@@ -27,5 +35,13 @@ router.patch(
 );
 
 router.delete("/:id", authenticate, validateObjectId("id", "Trade"), remove);
+
+router.post(
+  "/:id/screenshots",
+  authenticate,
+  validateObjectId("id", "Trade"),
+  upload.array("screenshots", 5),
+  uploadScreenshots,
+);
 
 export default router;

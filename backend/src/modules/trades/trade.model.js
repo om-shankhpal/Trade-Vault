@@ -87,12 +87,6 @@ const tradeSchema = new mongoose.Schema(
       min: 0,
     },
 
-    charges: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-
     strategy: {
       type: String,
       trim: true,

@@ -3,6 +3,7 @@ import { validateTradeBusinessRules } from "./trade-business-rules.js";
 import { calculateTradeMetrics } from "./trade-calculator.js";
 import ApiError from "../../utils/ApiError.js";
 import { toTradeResponse } from "./trade.mapper.js";
+import { uploadImage } from "../../services/cloudinary.service.js";
 
 // Create a new trade
 export const createTrade = async (tradeData, userId) => {
@@ -99,4 +100,34 @@ export const deleteTrade = async (tradeId, userId) => {
   }
 
   await trade.deleteOne();
+};
+
+// Upload trade screenshots
+export const uploadTradeScreenshots = async (tradeId, userId, files) => {
+  if (!files || files.length === 0) {
+    throw new ApiError(400, "No screenshots uploaded");
+  }
+
+  const trade = await Trade.findOne({
+    _id: tradeId,
+    user: userId,
+  });
+
+  if (!trade) {
+    throw new ApiError(404, "Trade not found");
+  }
+
+  if (trade.screenshots.length + files.length > 3) {
+    throw new ApiError(400, "A trade can have a maximum of 3 screenshots");
+  }
+
+  const uploadedImages = await Promise.all(
+    files.map((file) => uploadImage(file.buffer)),
+  );
+
+  trade.screenshots.push(...uploadedImages);
+
+  await trade.save();
+
+  return toTradeResponse(trade);
 };
