@@ -21,16 +21,89 @@ export const createTrade = async (tradeData, userId) => {
 };
 
 // Get Trades with pagination
-export const getTrades = async (userId, page = 1, limit = 10) => {
+export const getTrades = async (userId, page = 1, limit = 10, filters = {}) => {
   const skip = (page - 1) * limit;
 
+  const query = {
+    user: userId,
+  };
+
+  if (filters.status) {
+    query.status = filters.status;
+  }
+
+  if (filters.strategy) {
+    query.strategy = filters.strategy;
+  }
+
+  if (filters.segment) {
+    query.segment = filters.segment;
+  }
+
+  if (filters.direction) {
+    query.direction = filters.direction;
+  }
+
+  if (filters.from || filters.to) {
+    query.tradeDate = {};
+
+    if (filters.from) {
+      query.tradeDate.$gte = new Date(filters.from);
+    }
+
+    if (filters.to) {
+      query.tradeDate.$lte = new Date(filters.to);
+    }
+  }
+
+  if (filters.search) {
+    query.$or = [
+      {
+        symbol: {
+          $regex: filters.search,
+          $options: "i",
+        },
+      },
+      {
+        strategy: {
+          $regex: filters.search,
+          $options: "i",
+        },
+      },
+      {
+        marketCondition: {
+          $regex: filters.search,
+          $options: "i",
+        },
+      },
+      {
+        status: {
+          $regex: filters.search,
+          $options: "i",
+        },
+      },
+      {
+        direction: {
+          $regex: filters.search,
+          $options: "i",
+        },
+      },
+      {
+        segment: {
+          $regex: filters.search,
+          $options: "i",
+        },
+      },
+    ];
+  }
+
   const [trades, totalTrades] = await Promise.all([
-    Trade.find({ user: userId })
+    Trade.find(query)
       .sort({ tradeDate: -1, createdAt: -1 })
       .skip(skip)
       .limit(limit),
 
-    Trade.countDocuments({ user: userId }),
+    Trade.countDocuments(query),
   ]);
 
   return {
