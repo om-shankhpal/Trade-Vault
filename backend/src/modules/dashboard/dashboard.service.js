@@ -2,83 +2,132 @@ import mongoose from "mongoose";
 import Trade from "../trades/trade.model.js";
 
 export const getDashboard = async (userId) => {
-  const [totalTrades, summary, monthlyPnL] = await Promise.all([
-    Trade.countDocuments({ user: userId }),
+  const [totalTrades, summary, monthlyPnL, strategyPerformance, recentTrades] =
+    await Promise.all([
+      Trade.countDocuments({ user: userId }),
 
-    Trade.aggregate([
-      {
-        $match: {
-          user: new mongoose.Types.ObjectId(userId),
+      Trade.aggregate([
+        {
+          $match: {
+            user: new mongoose.Types.ObjectId(userId),
+          },
         },
-      },
-      {
-        $group: {
-          _id: null,
+        {
+          $group: {
+            _id: null,
 
-          netPnL: {
-            $sum: "$netPnL",
-          },
+            netPnL: {
+              $sum: "$netPnL",
+            },
 
-          totalR: {
-            $sum: "$rMultiple",
-          },
+            totalR: {
+              $sum: "$rMultiple",
+            },
 
-          wins: {
-            $sum: {
-              $cond: [{ $eq: ["$status", "WIN"] }, 1, 0],
+            wins: {
+              $sum: {
+                $cond: [{ $eq: ["$status", "WIN"] }, 1, 0],
+              },
+            },
+
+            losses: {
+              $sum: {
+                $cond: [{ $eq: ["$status", "LOSS"] }, 1, 0],
+              },
+            },
+
+            grossProfit: {
+              $sum: {
+                $cond: [{ $gt: ["$netPnL", 0] }, "$netPnL", 0],
+              },
+            },
+
+            grossLoss: {
+              $sum: {
+                $cond: [{ $lt: ["$netPnL", 0] }, { $abs: "$netPnL" }, 0],
+              },
             },
           },
+        },
+      ]),
+      Trade.aggregate([
+        {
+          $match: {
+            user: new mongoose.Types.ObjectId(userId),
+          },
+        },
+        {
+          $group: {
+            _id: {
+              year: { $year: "$tradeDate" },
+              month: { $month: "$tradeDate" },
+            },
 
-          losses: {
-            $sum: {
-              $cond: [{ $eq: ["$status", "LOSS"] }, 1, 0],
+            netPnL: {
+              $sum: "$netPnL",
+            },
+
+            trades: {
+              $sum: 1,
             },
           },
+        },
+        {
+          $sort: {
+            "_id.year": 1,
+            "_id.month": 1,
+          },
+        },
+      ]),
+      Trade.aggregate([
+        {
+          $match: {
+            user: new mongoose.Types.ObjectId(userId),
+            strategy: { $exists: true, $ne: "" },
+          },
+        },
+        {
+          $group: {
+            _id: "$strategy",
 
-          grossProfit: {
-            $sum: {
-              $cond: [{ $gt: ["$netPnL", 0] }, "$netPnL", 0],
+            trades: {
+              $sum: 1,
+            },
+
+            wins: {
+              $sum: {
+                $cond: [{ $eq: ["$status", "WIN"] }, 1, 0],
+              },
+            },
+
+            losses: {
+              $sum: {
+                $cond: [{ $eq: ["$status", "LOSS"] }, 1, 0],
+              },
+            },
+
+            netPnL: {
+              $sum: "$netPnL",
+            },
+
+            totalR: {
+              $sum: "$rMultiple",
             },
           },
+        },
 
-          grossLoss: {
-            $sum: {
-              $cond: [{ $lt: ["$netPnL", 0] }, { $abs: "$netPnL" }, 0],
-            },
+        {
+          $sort: {
+            netPnL: -1,
           },
         },
-      },
-    ]),
-    Trade.aggregate([
-      {
-        $match: {
-          user: new mongoose.Types.ObjectId(userId),
-        },
-      },
-      {
-        $group: {
-          _id: {
-            year: { $year: "$tradeDate" },
-            month: { $month: "$tradeDate" },
-          },
-
-          netPnL: {
-            $sum: "$netPnL",
-          },
-
-          trades: {
-            $sum: 1,
-          },
-        },
-      },
-      {
-        $sort: {
-          "_id.year": 1,
-          "_id.month": 1,
-        },
-      },
-    ]),
-  ]);
+      ]),
+      Trade.find({ user: new mongoose.Types.ObjectId(userId) })
+        .sort({ tradeDate: -1, createdAt: -1 })
+        .limit(5)
+        .select("symbol tradeDate status netPnL strategy direction segment")
+        .lean(),
+    ]);
 
   const stats = summary[0] || {
     netPnL: 0,
@@ -108,6 +157,16 @@ export const getDashboard = async (userId) => {
     trades: item.trades,
   }));
 
+  const strategyStats = strategyPerformance.map((item) => ({
+    strategy: item._id,
+    trades: item.trades,
+    wins: item.wins,
+    losses: item.losses,
+    winRate: Number(((item.wins / item.trades) * 100).toFixed(2)),
+    netPnL: item.netPnL,
+    averageR: Number((item.totalR / item.trades).toFixed(2)),
+  }));
+
   return {
     summary: {
       totalTrades,
@@ -118,5 +177,9 @@ export const getDashboard = async (userId) => {
     },
 
     monthlyPnL: monthlyPerformance,
+
+    strategyPerformance: strategyStats,
+
+    recentTrades,
   };
 };
