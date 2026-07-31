@@ -24,13 +24,16 @@ export const getAll = asyncHandler(async (req, res) => {
   const limit = Number(req.query.limit) || 10;
 
   const filters = {
+    search: req.query.search,
     status: req.query.status,
     strategy: req.query.strategy,
     segment: req.query.segment,
     direction: req.query.direction,
     from: req.query.from,
     to: req.query.to,
-    search: req.query.search,
+
+    sortBy: req.query.sortBy,
+    order: req.query.order,
   };
 
   const data = await getTrades(req.user.id, page, limit, filters);

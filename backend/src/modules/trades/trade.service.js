@@ -97,11 +97,24 @@ export const getTrades = async (userId, page = 1, limit = 10, filters = {}) => {
     ];
   }
 
+  const allowedSortFields = ["tradeDate", "netPnL", "rMultiple", "createdAt"];
+
+  const sortField = allowedSortFields.includes(filters.sortBy)
+    ? filters.sortBy
+    : "tradeDate";
+
+  const sortOrder = filters.order === "asc" ? 1 : -1;
+
+  const sort = {
+    [sortField]: sortOrder,
+  };
+
+  if (sortField !== "createdAt") {
+    sort.createdAt = -1;
+  }
+
   const [trades, totalTrades] = await Promise.all([
-    Trade.find(query)
-      .sort({ tradeDate: -1, createdAt: -1 })
-      .skip(skip)
-      .limit(limit),
+    Trade.find(query).sort(sort).skip(skip).limit(limit),
 
     Trade.countDocuments(query),
   ]);
