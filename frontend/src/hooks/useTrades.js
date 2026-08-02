@@ -21,7 +21,14 @@ export default function useTrades(params = {}) {
     };
 
     fetchTrades();
-  }, [params.search]);
+  }, [
+    params.search,
+    params.status,
+    params.strategy,
+    params.direction,
+    params.segment,
+    params.page,
+  ]);
 
   return {
     trades,
