@@ -1,27 +1,29 @@
 import StatsCard from "./StatsCard";
 
-function StatsGrid() {
+function StatsGrid({ dashboard }) {
+  const summary = dashboard.summary;
+
   return (
     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
 
       <StatsCard
         title="Total Trades"
-        value="126"
+        value={summary.totalTrades}
       />
 
       <StatsCard
         title="Win Rate"
-        value="62%"
+        value={`${summary.winRate}%`}
       />
 
       <StatsCard
         title="Net P&L"
-        value="₹28,540"
+        value={`₹${summary.netPnL.toLocaleString()}`}
       />
 
       <StatsCard
         title="Average R"
-        value="1.84R"
+        value={`${summary.averageR}R`}
       />
 
     </div>
