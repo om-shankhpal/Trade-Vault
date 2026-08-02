@@ -1,4 +1,21 @@
+import { useParams } from "react-router-dom";
+
 function TradeDetails() {
-    return <h1>Trade Details</h1>;
+  const { id } = useParams();
+
+  return (
+    <div>
+
+      <h1 className="mb-4 text-3xl font-bold">
+        Trade Details
+      </h1>
+
+      <p>
+        Trade ID: {id}
+      </p>
+
+    </div>
+  );
 }
+
 export default TradeDetails;
