@@ -7,19 +7,21 @@ export default function useTrades(params = {}) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchTrades() {
+    const fetchTrades = async () => {
       try {
         const data = await getTrades(params);
 
         setTrades(data.trades);
         setPagination(data.pagination);
+      } catch (error) {
+        console.error(error);
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchTrades();
-  }, []);
+  }, [params.search]);
 
   return {
     trades,
