@@ -19,7 +19,7 @@ export const createTrade = async (trade) => {
 };
 
 export const updateTrade = async (id, trade) => {
-  const response = await api.put(`/trades/${id}`, trade);
+  const response = await api.patch(`/trades/${id}`, trade);
   return response.data.data;
 };
 
