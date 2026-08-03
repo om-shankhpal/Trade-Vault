@@ -1,16 +1,43 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
 
 import useTrade from "../../hooks/useTrade";
+import { deleteTrade } from "../../services/trade.service";
 
 import PerformanceCards from "../../components/trade-details/PerformanceCards";
 import DetailItem from "../../components/trade-details/DetailItem";
 import DetailSection from "../../components/trade-details/DetailSection";
 import ScreenshotGallery from "../../components/trade-details/ScreenshotGallery";
+import DeleteModal from "../../components/common/DeleteModal";
 
 function TradeDetails() {
   const { id } = useParams();
 
+  const navigate = useNavigate();
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
   const { trade, loading } = useTrade(id);
+
+  async function handleDelete() {
+    try {
+      setDeleting(true);
+
+      await deleteTrade(trade.id);
+
+      alert("Trade deleted successfully.");
+
+      navigate("/trades");
+    } catch (error) {
+      console.error(error);
+
+      alert(error.response?.data?.message || "Failed to delete trade.");
+    } finally {
+      setDeleting(false);
+      setShowDeleteModal(false);
+    }
+  }
 
   if (loading) {
     return <p>Loading trade...</p>;
@@ -46,6 +73,13 @@ function TradeDetails() {
           >
             Edit
           </Link>
+
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+          >
+            Delete
+          </button>
         </div>
       </div>
 
@@ -59,25 +93,13 @@ function TradeDetails() {
           value={trade.tradeDate.split("T")[0]}
         />
 
-        <DetailItem
-          label="Symbol"
-          value={trade.symbol}
-        />
+        <DetailItem label="Symbol" value={trade.symbol} />
 
-        <DetailItem
-          label="Segment"
-          value={trade.segment}
-        />
+        <DetailItem label="Segment" value={trade.segment} />
 
-        <DetailItem
-          label="Direction"
-          value={trade.direction}
-        />
+        <DetailItem label="Direction" value={trade.direction} />
 
-        <DetailItem
-          label="Status"
-          value={trade.status}
-        />
+        <DetailItem label="Status" value={trade.status} />
       </DetailSection>
 
       {/* Execution */}
@@ -98,20 +120,11 @@ function TradeDetails() {
           })}
         />
 
-        <DetailItem
-          label="Entry Price"
-          value={trade.entryPrice}
-        />
+        <DetailItem label="Entry Price" value={trade.entryPrice} />
 
-        <DetailItem
-          label="Exit Price"
-          value={trade.exitPrice}
-        />
+        <DetailItem label="Exit Price" value={trade.exitPrice} />
 
-        <DetailItem
-          label="Quantity"
-          value={trade.quantity}
-        />
+        <DetailItem label="Quantity" value={trade.quantity} />
 
         <DetailItem
           label="Planned Stop Loss"
@@ -184,6 +197,17 @@ function TradeDetails() {
 
       {/* Screenshots */}
       <ScreenshotGallery screenshots={trade.screenshots} />
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <DeleteModal
+          title="Delete Trade"
+          message="Are you sure you want to delete this trade? This action cannot be undone."
+          loading={deleting}
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={handleDelete}
+        />
+      )}
     </div>
   );
 }
