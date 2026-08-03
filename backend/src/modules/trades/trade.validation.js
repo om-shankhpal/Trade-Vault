@@ -1,5 +1,6 @@
 import { body } from "express-validator";
 import { query } from "express-validator";
+import { TRADE_SEGMENTS, TRADE_DIRECTIONS } from "./trade.constants.js";
 
 export const createTradeValidator = [
   body("tradeDate").isISO8601().withMessage("Trade date must be a valid date"),
@@ -11,9 +12,9 @@ export const createTradeValidator = [
     .isLength({ max: 30 })
     .withMessage("Symbol cannot exceed 30 characters"),
 
-  body("segment").isIn(["FUTURES", "OPTIONS"]).withMessage("Invalid segment"),
+  body("segment").isIn(TRADE_SEGMENTS).withMessage("Invalid segment"),
 
-  body("direction").isIn(["LONG", "SHORT"]).withMessage("Invalid direction"),
+  body("direction").isIn(TRADE_DIRECTIONS).withMessage("Invalid direction"),
 
   body("entryTime").isISO8601().withMessage("Entry time must be a valid date"),
 
@@ -93,12 +94,12 @@ export const updateTradeValidator = [
 
   body("segment")
     .optional()
-    .isIn(["FUTURES", "OPTIONS"])
+    .isIn(TRADE_SEGMENTS)
     .withMessage("Invalid segment"),
 
   body("direction")
     .optional()
-    .isIn(["LONG", "SHORT"])
+    .isIn(TRADE_DIRECTIONS)
     .withMessage("Invalid direction"),
 
   body("entryTime")

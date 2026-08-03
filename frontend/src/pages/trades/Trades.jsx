@@ -17,6 +17,8 @@ function Trades() {
     strategy: "",
     direction: "",
     segment: "",
+    sortBy: "tradeDate",
+    order: "desc",
     page: 1,
   });
 
@@ -28,12 +30,7 @@ function Trades() {
 
   const debouncedSearch = useDebounce(filters.search);
 
-  const {
-    trades,
-    pagination,
-    loading,
-    refetch,
-  } = useTrades({
+  const { trades, pagination, loading, refetch } = useTrades({
     ...filters,
     search: debouncedSearch,
   });
@@ -66,19 +63,13 @@ function Trades() {
 
   return (
     <>
-      <TradesToolbar
-        filters={filters}
-        setFilters={setFilters}
-      />
+      <TradesToolbar filters={filters} setFilters={setFilters} />
 
       {loading ? (
         <p>Loading...</p>
       ) : (
         <>
-          <TradeTable
-            trades={trades}
-            onDelete={openDeleteModal}
-          />
+          <TradeTable trades={trades} onDelete={openDeleteModal} />
 
           <Pagination pagination={pagination} />
         </>

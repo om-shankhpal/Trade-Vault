@@ -29,6 +29,8 @@ export default function useTrades(params = {}) {
     params.strategy,
     params.direction,
     params.segment,
+    params.sortBy,
+    params.order,
     params.page,
   ]);
 

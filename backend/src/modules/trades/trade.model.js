@@ -1,4 +1,9 @@
 import mongoose from "mongoose";
+import {
+  TRADE_SEGMENTS,
+  TRADE_DIRECTIONS,
+  TRADE_STATUSES,
+} from "./trade.constants.js";
 
 const screenshotSchema = new mongoose.Schema(
   {
@@ -37,13 +42,13 @@ const tradeSchema = new mongoose.Schema(
 
     segment: {
       type: String,
-      enum: ["FUTURES", "OPTIONS"],
+      enum: TRADE_SEGMENTS,
       required: true,
     },
 
     direction: {
       type: String,
-      enum: ["LONG", "SHORT"],
+      enum: TRADE_DIRECTIONS,
       required: true,
     },
 
@@ -154,7 +159,7 @@ const tradeSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["WIN", "LOSS", "BREAKEVEN"],
+      enum: TRADE_STATUSES,
       required: true,
     },
   },
