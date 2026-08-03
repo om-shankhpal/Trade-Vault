@@ -1,17 +1,27 @@
 import TradeActions from "./TradeActions";
 
-function TradeRow({ trade }) {
+function TradeRow({ trade, onDelete }) {
   return (
     <tr className="border-b hover:bg-slate-50">
-      <td className="p-4">{new Date(trade.tradeDate).toLocaleDateString()}</td>
+      <td className="p-4">
+        {new Date(trade.tradeDate).toLocaleDateString()}
+      </td>
 
-      <td className="p-4 font-medium">{trade.symbol}</td>
+      <td className="p-4 font-medium">
+        {trade.symbol}
+      </td>
 
-      <td className="p-4">{trade.direction}</td>
+      <td className="p-4">
+        {trade.direction}
+      </td>
 
-      <td className="p-4">{trade.strategy}</td>
+      <td className="p-4">
+        {trade.strategy}
+      </td>
 
-      <td className="p-4">{trade.status}</td>
+      <td className="p-4">
+        {trade.status}
+      </td>
 
       <td
         className={`p-4 font-semibold ${
@@ -22,9 +32,11 @@ function TradeRow({ trade }) {
       </td>
 
       <td className="p-4">
-        <TradeActions tradeId={trade.id} />
+        <TradeActions
+          tradeId={trade.id}
+          onDelete={() => onDelete(trade)}
+        />
       </td>
-      
     </tr>
   );
 }

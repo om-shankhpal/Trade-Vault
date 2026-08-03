@@ -1,10 +1,9 @@
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-function TradeActions({ tradeId }) {
+function TradeActions({ tradeId, onDelete }) {
   return (
     <div className="flex items-center gap-3">
-
       <Link
         to={`/trades/${tradeId}`}
         className="text-blue-600 hover:text-blue-800"
@@ -22,12 +21,12 @@ function TradeActions({ tradeId }) {
       </Link>
 
       <button
+        onClick={onDelete}
         className="text-red-600 hover:text-red-800"
         title="Delete Trade"
       >
         <Trash2 size={18} />
       </button>
-
     </div>
   );
 }

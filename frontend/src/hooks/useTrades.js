@@ -6,20 +6,22 @@ export default function useTrades(params = {}) {
   const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  async function fetchTrades() {
+    try {
+      setLoading(true);
+
+      const data = await getTrades(params);
+
+      setTrades(data.trades);
+      setPagination(data.pagination);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
-    const fetchTrades = async () => {
-      try {
-        const data = await getTrades(params);
-
-        setTrades(data.trades);
-        setPagination(data.pagination);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchTrades();
   }, [
     params.search,
@@ -34,5 +36,6 @@ export default function useTrades(params = {}) {
     trades,
     pagination,
     loading,
+    refetch: fetchTrades,
   };
 }
