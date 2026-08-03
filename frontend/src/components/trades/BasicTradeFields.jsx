@@ -1,17 +1,11 @@
 function BasicTradeFields({ formData, handleChange }) {
   return (
     <div className="rounded-xl border bg-white p-6 shadow-sm">
-
-      <h2 className="mb-6 text-xl font-semibold">
-        Basic Trade Information
-      </h2>
+      <h2 className="mb-6 text-xl font-semibold">Basic Trade Information</h2>
 
       <div className="grid grid-cols-2 gap-6">
-
         <div>
-          <label className="mb-2 block text-sm font-medium">
-            Trade Date
-          </label>
+          <label className="mb-2 block text-sm font-medium">Trade Date</label>
 
           <input
             type="date"
@@ -22,9 +16,7 @@ function BasicTradeFields({ formData, handleChange }) {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">
-            Symbol
-          </label>
+          <label className="mb-2 block text-sm font-medium">Symbol</label>
 
           <input
             type="text"
@@ -36,9 +28,7 @@ function BasicTradeFields({ formData, handleChange }) {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">
-            Segment
-          </label>
+          <label className="mb-2 block text-sm font-medium">Segment</label>
 
           <select
             value={formData.segment}
@@ -51,9 +41,7 @@ function BasicTradeFields({ formData, handleChange }) {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">
-            Direction
-          </label>
+          <label className="mb-2 block text-sm font-medium">Direction</label>
 
           <select
             value={formData.direction}
@@ -66,12 +54,10 @@ function BasicTradeFields({ formData, handleChange }) {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">
-            Entry Time
-          </label>
+          <label className="mb-2 block text-sm font-medium">Entry Time</label>
 
           <input
-            type="datetime-local"
+            type="time"
             value={formData.entryTime}
             onChange={(e) => handleChange("entryTime", e.target.value)}
             className="w-full rounded-lg border px-3 py-2"
@@ -79,12 +65,10 @@ function BasicTradeFields({ formData, handleChange }) {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">
-            Exit Time
-          </label>
+          <label className="mb-2 block text-sm font-medium">Exit Time</label>
 
           <input
-            type="datetime-local"
+            type="time"
             value={formData.exitTime}
             onChange={(e) => handleChange("exitTime", e.target.value)}
             className="w-full rounded-lg border px-3 py-2"
@@ -92,9 +76,7 @@ function BasicTradeFields({ formData, handleChange }) {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">
-            Entry Price
-          </label>
+          <label className="mb-2 block text-sm font-medium">Entry Price</label>
 
           <input
             type="number"
@@ -105,9 +87,7 @@ function BasicTradeFields({ formData, handleChange }) {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">
-            Exit Price
-          </label>
+          <label className="mb-2 block text-sm font-medium">Exit Price</label>
 
           <input
             type="number"
@@ -118,20 +98,34 @@ function BasicTradeFields({ formData, handleChange }) {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">
-            Quantity
-          </label>
+          <label className="mb-2 block text-sm font-medium">Quantity</label>
 
           <input
             type="number"
+            min="1"
             value={formData.quantity}
+            placeholder="100"
             onChange={(e) => handleChange("quantity", e.target.value)}
             className="w-full rounded-lg border px-3 py-2"
           />
         </div>
+        <div>
+          <div>
+            <label className="mb-2 block text-sm font-medium">
+              Charges/Taxes
+            </label>
 
+            <input
+              type="number"
+              step="0.01"
+              value={formData.charges}
+              placeholder="120"
+              onChange={(e) => handleChange("charges", e.target.value)}
+              className="w-full rounded-lg border px-3 py-2"
+            />
+          </div>
+        </div>
       </div>
-
     </div>
   );
 }
