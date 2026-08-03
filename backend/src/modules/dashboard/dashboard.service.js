@@ -334,3 +334,45 @@ export const getEquityCurve = async (userId) => {
     };
   });
 };
+
+export const getTradingHeatmap = async (userId) => {
+  const heatmap = await Trade.aggregate([
+    {
+      $match: {
+        user: new mongoose.Types.ObjectId(userId),
+      },
+    },
+
+    {
+      $group: {
+        _id: {
+          year: { $year: "$tradeDate" },
+          month: { $month: "$tradeDate" },
+          day: { $dayOfMonth: "$tradeDate" },
+        },
+
+        trades: {
+          $sum: 1,
+        },
+
+        netPnL: {
+          $sum: "$netPnL",
+        },
+      },
+    },
+
+    {
+      $sort: {
+        "_id.year": 1,
+        "_id.month": 1,
+        "_id.day": 1,
+      },
+    },
+  ]);
+
+  return heatmap.map((item) => ({
+    date: `${item._id.year}-${String(item._id.month).padStart(2, "0")}-${String(item._id.day).padStart(2, "0")}`,
+    trades: item.trades,
+    netPnL: item.netPnL,
+  }));
+};
