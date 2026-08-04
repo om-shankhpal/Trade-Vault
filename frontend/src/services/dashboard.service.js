@@ -5,3 +5,9 @@ export const getDashboard = async () => {
 
   return response.data.data;
 };
+
+export const getEquityCurve = async () => {
+  const response = await api.get("/dashboard/equity-curve");
+
+  return response.data.data;
+};
