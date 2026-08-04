@@ -9,24 +9,21 @@ import {
 } from "recharts";
 
 import useEquityCurve from "../../hooks/useEquityCurve";
+import AnalyticsCard from "./AnalyticsCard";
 
 function EquityCurveChart() {
   const { equityCurve, loading } = useEquityCurve();
 
   if (loading) {
     return (
-      <div className="rounded-xl border bg-white p-6 shadow-sm">
-        Loading equity curve...
-      </div>
+      <AnalyticsCard title="Equity Curve">
+        Loading...
+      </AnalyticsCard>
     );
   }
 
   return (
-    <div className="rounded-xl border bg-white p-6 shadow-sm">
-      <h2 className="mb-6 text-xl font-semibold">
-        Equity Curve
-      </h2>
-
+    <AnalyticsCard title="Equity Curve">
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={equityCurve}>
@@ -49,8 +46,8 @@ function EquityCurveChart() {
             />
 
             <Line
-              type="monotone"
               dataKey="equity"
+              type="monotone"
               stroke="#2563eb"
               strokeWidth={3}
               dot
@@ -58,7 +55,7 @@ function EquityCurveChart() {
           </LineChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </AnalyticsCard>
   );
 }
 
