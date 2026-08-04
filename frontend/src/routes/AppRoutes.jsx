@@ -8,6 +8,7 @@ import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 
 import Dashboard from "../pages/dashboard/Dashboard";
+import Analytics from "../pages/analytics/Analytics";
 import Trades from "../pages/trades/Trades";
 import CreateTrade from "../pages/trades/CreateTrade";
 import EditTrade from "../pages/trades/EditTrade";
@@ -28,6 +29,8 @@ function AppRoutes() {
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+
+          <Route path="/analytics" element={<Analytics />} />
 
           <Route path="/trades" element={<Trades />} />
 
