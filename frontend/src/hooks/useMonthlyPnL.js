@@ -1,27 +1,10 @@
-import { useEffect, useState } from "react";
-import { getDashboard } from "../services/dashboard.service";
+import useDashboard from "./useDashboard";
 
 export default function useMonthlyPnL() {
-  const [monthlyPnL, setMonthlyPnL] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const dashboard = await getDashboard();
-        setMonthlyPnL(dashboard.monthlyPnL);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, []);
+  const { dashboard, loading } = useDashboard();
 
   return {
-    monthlyPnL,
+    monthlyPnL: dashboard?.monthlyPnL ?? [],
     loading,
   };
 }

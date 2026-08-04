@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getEquityCurve } from "../services/dashboard.service";
+import { getEquityCurve } from "../services/equityCurve.service";
 
 export default function useEquityCurve() {
   const [equityCurve, setEquityCurve] = useState([]);
