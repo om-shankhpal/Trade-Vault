@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { getHeatmap } from "../services/heatmap.service";
 
-export default function useHeatmap() {
+function useHeatmap() {
   const [heatmap, setHeatmap] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchHeatmap() {
+    const fetchHeatmap = async () => {
       try {
         const data = await getHeatmap();
         setHeatmap(data);
@@ -15,7 +15,7 @@ export default function useHeatmap() {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchHeatmap();
   }, []);
@@ -25,3 +25,5 @@ export default function useHeatmap() {
     loading,
   };
 }
+
+export default useHeatmap;
