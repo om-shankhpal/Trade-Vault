@@ -1,4 +1,4 @@
-import cloudinary from "./cloudinary.js";
+import cloudinary from "../config/cloudinary.js";
 
 export const uploadImage = (buffer, folder) => {
   return new Promise((resolve, reject) => {
@@ -12,7 +12,7 @@ export const uploadImage = (buffer, folder) => {
         }
 
         resolve(result);
-      }
+      },
     );
 
     stream.end(buffer);
