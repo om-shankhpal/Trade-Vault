@@ -1,6 +1,8 @@
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
 
+import { updateProfile as updateProfileService } from "./profile.service.js";
+
 export const getProfile = asyncHandler(async (req, res) => {
   res.status(200).json(
     new ApiResponse(200, "Profile fetched successfully", {
@@ -9,5 +11,22 @@ export const getProfile = asyncHandler(async (req, res) => {
       email: req.user.email,
       profilePicture: req.user.profilePicture,
     })
+  );
+});
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  const { fullName } = req.body;
+
+  const updatedProfile = await updateProfileService(
+    req.user.id,
+    fullName
+  );
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      "Profile updated successfully",
+      updatedProfile
+    )
   );
 });
