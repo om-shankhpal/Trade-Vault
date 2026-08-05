@@ -17,10 +17,22 @@ import TradeDetails from "../pages/trades/TradeDetails";
 import Profile from "../pages/profile/Profile";
 import Settings from "../pages/Settings";
 
+import { Navigate } from "react-router-dom";
+import { isAuthenticated } from "../utils/token";
+
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route
+        path="/"
+        element={
+          isAuthenticated() ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
 
       <Route path="/login" element={<Login />} />
 
