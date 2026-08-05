@@ -1,6 +1,11 @@
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
-import { registerUser, loginUser } from "./auth.service.js";
+
+import {
+  registerUser,
+  loginUser,
+  changePassword,
+} from "./auth.service.js";
 
 export const register = asyncHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -24,11 +29,21 @@ export const login = asyncHandler(async (req, res) => {
     password,
   });
 
-  res.status(200).json(
-    new ApiResponse(
-      200,
-      "Login successful",
-      data
-    )
-  );
+  res
+    .status(200)
+    .json(new ApiResponse(200, "Login successful", data));
+});
+
+export const updatePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  await changePassword({
+    userId: req.user.id,
+    currentPassword,
+    newPassword,
+  });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, "Password changed successfully"));
 });

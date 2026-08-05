@@ -59,3 +59,43 @@ export const loginUser = async ({ email, password }) => {
     },
   };
 };
+
+export const changePassword = async ({
+  userId,
+  currentPassword,
+  newPassword,
+}) => {
+  const user = await User.findById(userId).select("+password");
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const isPasswordCorrect = await bcrypt.compare(
+    currentPassword,
+    user.password,
+  );
+
+  if (!isPasswordCorrect) {
+    throw new ApiError(400, "Current password is incorrect");
+  }
+
+  const isSamePassword = await bcrypt.compare(
+    newPassword,
+    user.password,
+  );
+
+  if (isSamePassword) {
+    throw new ApiError(
+      400,
+      "New password must be different from current password",
+    );
+  }
+
+  user.password = await bcrypt.hash(
+    newPassword,
+    Number(process.env.BCRYPT_SALT_ROUNDS),
+  );
+
+  await user.save();
+};
