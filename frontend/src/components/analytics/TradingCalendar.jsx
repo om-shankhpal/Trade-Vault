@@ -50,7 +50,9 @@ function TradingCalendar() {
   if (loading) {
     return (
       <AnalyticsCard title="Trading Calendar">
-        Loading...
+        <div className="flex h-72 items-center justify-center text-slate-500">
+          Loading...
+        </div>
       </AnalyticsCard>
     );
   }
@@ -60,12 +62,12 @@ function TradingCalendar() {
       <div className="mb-6 flex items-center justify-between">
         <button
           onClick={previousMonth}
-          className="rounded-lg border px-3 py-1 hover:bg-slate-100"
+          className="rounded-lg border border-slate-300 px-3 py-1 transition hover:bg-slate-100"
         >
           ←
         </button>
 
-        <h3 className="font-semibold">
+        <h3 className="text-lg font-semibold">
           {currentMonth.toLocaleString("default", {
             month: "long",
             year: "numeric",
@@ -74,19 +76,19 @@ function TradingCalendar() {
 
         <button
           onClick={nextMonth}
-          className="rounded-lg border px-3 py-1 hover:bg-slate-100"
+          className="rounded-lg border border-slate-300 px-3 py-1 transition hover:bg-slate-100"
         >
           →
         </button>
       </div>
 
-      <div className="mb-3 grid grid-cols-7 text-center text-sm font-semibold text-slate-500">
-        {weekDays.map((day) => (
-          <div key={day}>{day}</div>
+      <div className="mb-3 grid grid-cols-7 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
+        {weekDays.map((weekday) => (
+          <div key={weekday}>{weekday}</div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-1">
         {cells.map((day, index) => {
           if (day === null) {
             return (
@@ -108,33 +110,33 @@ function TradingCalendar() {
 
           if (trade) {
             if (trade.netPnL > 0) {
-              bg = "bg-green-100 border-green-300";
+              bg = "bg-green-200 border-green-300";
             } else if (trade.netPnL < 0) {
-              bg = "bg-red-100 border-red-300";
+              bg = "bg-red-200 border-red-300";
             } else {
-              bg = "bg-yellow-100 border-yellow-300";
+              bg = "bg-yellow-200 border-yellow-300";
             }
           }
 
           return (
             <div
-              key={day}
+              key={index}
               title={
                 trade
                   ? `${trade.date}
 
 Trades: ${trade.trades}
 
-Net P&L: ₹${trade.netPnL}`
+Net P&L: ₹${trade.netPnL.toFixed(2)}`
                   : "No Trades"
               }
-              className={`${bg} aspect-square rounded-lg border transition hover:scale-105`}
+              className={`${bg} aspect-square cursor-pointer rounded-md border transition-all duration-200 hover:scale-110 hover:shadow-md`}
             >
-              <div className="flex h-full flex-col items-center justify-center">
-                <span className="font-medium">{day}</span>
+              <div className="flex h-full flex-col items-center justify-center text-center">
+                <span className="text-sm font-semibold">{day}</span>
 
                 {trade && (
-                  <span className="mt-1 text-xs font-semibold">
+                  <span className="mt-0.5 text-[10px] font-bold">
                     {trade.netPnL > 0 ? "+" : ""}
                     ₹{Math.round(trade.netPnL)}
                   </span>
@@ -145,21 +147,17 @@ Net P&L: ₹${trade.netPnL}`
         })}
       </div>
 
-      <div className="mt-6 flex justify-center gap-5 text-sm">
-        <div className="flex items-center gap-2">
+      <div className="mt-8 flex items-center justify-between text-xs text-slate-500">
+        <span>Less</span>
+
+        <div className="flex gap-1">
+          <div className="h-3 w-3 rounded bg-slate-100"></div>
+          <div className="h-3 w-3 rounded bg-green-100"></div>
           <div className="h-3 w-3 rounded bg-green-300"></div>
-          Profit
+          <div className="h-3 w-3 rounded bg-green-500"></div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded bg-red-300"></div>
-          Loss
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded bg-yellow-300"></div>
-          Breakeven
-        </div>
+        <span>More</span>
       </div>
     </AnalyticsCard>
   );
