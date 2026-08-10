@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff } from "lucide-react";
 
 import { login as loginService } from "../../services/auth.service";
 import { useAuth } from "../../context/AuthContext";
@@ -13,6 +14,7 @@ function Login() {
     password: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -21,6 +23,7 @@ function Login() {
       ...prev,
       [e.target.name]: e.target.value,
     }));
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -30,16 +33,8 @@ function Login() {
     setError("");
 
     try {
-      console.log("Submitting...", formData);
-
       const data = await loginService(formData);
-
-      console.log("Response:", data);
-
       login(data);
-
-      console.log("Logged in");
-
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password");
@@ -49,44 +44,108 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow">
-        <h1 className="mb-6 text-center text-3xl font-bold">TradeVault</h1>
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12 text-slate-900">
+      <div className="w-full max-w-md space-y-8 rounded-2xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-900/5">
+        {/* Brand Header */}
+        <div className="text-center">
+          <Link to="/" className="inline-flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-900 text-sm font-bold text-white">
+              TV
+            </div>
+            <span className="text-xl font-bold tracking-tight text-slate-900">
+              TradeVault
+            </span>
+          </Link>
+          <h2 className="mt-6 text-xl font-bold tracking-tight text-slate-900">
+            Welcome back
+          </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Sign in to access your trading journal and analytics
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full rounded border p-3"
-          />
+        {error && (
+          <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-medium text-rose-600">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full rounded border p-3"
-          />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-500">
+              Email Address
+            </label>
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <Mail className="h-4 w-4" />
+              </div>
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="name@example.com"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 transition focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-900"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-500">
+              Password
+            </label>
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <Lock className="h-4 w-4" />
+              </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                required
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-400 transition focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-900"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded bg-black p-3 text-white hover:bg-gray-800"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50 shadow-lg shadow-slate-900/10"
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? (
+              <span>Signing in...</span>
+            ) : (
+              <>
+                <span>Sign In</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
           </button>
         </form>
 
-        {error && <p className="mt-4 text-center text-red-600">{error}</p>}
-
-        <p className="mt-6 text-center">
+        <p className="text-center text-xs text-slate-500">
           Don't have an account?{" "}
-          <Link to="/register" className="font-semibold text-blue-600">
-            Register
+          <Link
+            to="/register"
+            className="font-semibold text-slate-900 hover:underline"
+          >
+            Create an account
           </Link>
         </p>
       </div>

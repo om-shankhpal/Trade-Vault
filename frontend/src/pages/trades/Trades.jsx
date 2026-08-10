@@ -44,17 +44,14 @@ function Trades() {
     try {
       setDeleting(true);
 
-      await deleteTrade(selectedTrade.id);
+      await deleteTrade(selectedTrade.id || selectedTrade._id);
 
       await refetch();
 
       setShowDeleteModal(false);
       setSelectedTrade(null);
-
-      alert("Trade deleted successfully.");
     } catch (error) {
       console.error(error);
-
       alert(error.response?.data?.message || "Failed to delete trade.");
     } finally {
       setDeleting(false);
@@ -62,11 +59,16 @@ function Trades() {
   }
 
   return (
-    <>
+    <div className="space-y-6">
       <TradesToolbar filters={filters} setFilters={setFilters} />
 
       {loading ? (
-        <p>Loading...</p>
+        <div className="space-y-3 animate-pulse">
+          <div className="h-12 rounded-2xl bg-slate-200" />
+          <div className="h-16 rounded-xl bg-slate-100" />
+          <div className="h-16 rounded-xl bg-slate-100" />
+          <div className="h-16 rounded-xl bg-slate-100" />
+        </div>
       ) : (
         <>
           <TradeTable trades={trades} onDelete={openDeleteModal} />
@@ -78,7 +80,7 @@ function Trades() {
       {showDeleteModal && (
         <DeleteModal
           title="Delete Trade"
-          message={`Are you sure you want to delete the ${selectedTrade.symbol} trade? This action cannot be undone.`}
+          message={`Are you sure you want to delete the ${selectedTrade?.symbol || "selected"} trade? This action cannot be undone.`}
           loading={deleting}
           onCancel={() => {
             setShowDeleteModal(false);
@@ -87,7 +89,7 @@ function Trades() {
           onConfirm={handleDelete}
         />
       )}
-    </>
+    </div>
   );
 }
 

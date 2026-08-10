@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Eye, EyeOff, Shield, AlertTriangle, CheckCircle2, AlertCircle } from "lucide-react";
 import { changePassword } from "../services/settings.service";
 
 function Settings() {
@@ -16,12 +16,16 @@ function Settings() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (event) => {
     setForm({
       ...form,
       [event.target.name]: event.target.value,
     });
+    setSuccessMessage("");
+    setErrorMessage("");
   };
 
   const togglePassword = (field) => {
@@ -35,29 +39,34 @@ function Settings() {
     event.preventDefault();
 
     if (form.newPassword !== form.confirmPassword) {
-      alert("Passwords do not match.");
+      setErrorMessage("New passwords do not match.");
+      return;
+    }
+
+    if (form.newPassword.length < 6) {
+      setErrorMessage("New password must be at least 6 characters long.");
       return;
     }
 
     try {
       setLoading(true);
+      setSuccessMessage("");
+      setErrorMessage("");
 
       await changePassword({
         currentPassword: form.currentPassword,
         newPassword: form.newPassword,
       });
 
-      alert("Password changed successfully.");
-
+      setSuccessMessage("Password changed successfully.");
       setForm({
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
     } catch (error) {
-      alert(
-        error.response?.data?.message ||
-          "Something went wrong."
+      setErrorMessage(
+        error.response?.data?.message || "Failed to update password."
       );
     } finally {
       setLoading(false);
@@ -65,158 +74,159 @@ function Settings() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8">
+    <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Settings</h1>
-
-        <p className="mt-2 text-slate-500">
-          Manage your account settings.
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          Account Settings
+        </h1>
+        <p className="mt-1 text-sm text-slate-500">
+          Manage security parameters and authentication preferences.
         </p>
       </div>
 
-      <div className="rounded-2xl border bg-white p-8 shadow-sm">
-        <h2 className="mb-6 text-xl font-semibold">
-          Security
-        </h2>
+      {successMessage && (
+        <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-medium text-emerald-700">
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
+          <span>{successMessage}</span>
+        </div>
+      )}
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-6"
-        >
-          {/* Current Password */}
+      {errorMessage && (
+        <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-medium text-rose-700">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
 
+      {/* Security Section */}
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-8 shadow-sm">
+        <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
+            <Shield className="h-4 w-4" />
+          </div>
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <h2 className="text-base font-semibold text-slate-900">
+              Security & Credentials
+            </h2>
+            <p className="text-xs text-slate-500">
+              Update your account password
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Current Password */}
+          <div>
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-700">
               Current Password
             </label>
-
             <div className="relative">
               <input
-                type={
-                  showPassword.current
-                    ? "text"
-                    : "password"
-                }
+                type={showPassword.current ? "text" : "password"}
                 name="currentPassword"
+                required
                 value={form.currentPassword}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 outline-none focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 pr-10 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white"
               />
-
               <button
                 type="button"
-                onClick={() =>
-                  togglePassword("current")
-                }
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+                onClick={() => togglePassword("current")}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
               >
                 {showPassword.current ? (
-                  <FaEyeSlash />
+                  <EyeOff className="h-4 w-4" />
                 ) : (
-                  <FaEye />
+                  <Eye className="h-4 w-4" />
                 )}
               </button>
             </div>
           </div>
 
           {/* New Password */}
-
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-700">
               New Password
             </label>
-
             <div className="relative">
               <input
-                type={
-                  showPassword.new
-                    ? "text"
-                    : "password"
-                }
+                type={showPassword.new ? "text" : "password"}
                 name="newPassword"
+                required
                 value={form.newPassword}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 outline-none focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 pr-10 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white"
               />
-
               <button
                 type="button"
-                onClick={() =>
-                  togglePassword("new")
-                }
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+                onClick={() => togglePassword("new")}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
               >
                 {showPassword.new ? (
-                  <FaEyeSlash />
+                  <EyeOff className="h-4 w-4" />
                 ) : (
-                  <FaEye />
+                  <Eye className="h-4 w-4" />
                 )}
               </button>
             </div>
           </div>
 
           {/* Confirm Password */}
-
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              Confirm Password
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-700">
+              Confirm New Password
             </label>
-
             <div className="relative">
               <input
-                type={
-                  showPassword.confirm
-                    ? "text"
-                    : "password"
-                }
+                type={showPassword.confirm ? "text" : "password"}
                 name="confirmPassword"
+                required
                 value={form.confirmPassword}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 outline-none focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 pr-10 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white"
               />
-
               <button
                 type="button"
-                onClick={() =>
-                  togglePassword("confirm")
-                }
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+                onClick={() => togglePassword("confirm")}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
               >
                 {showPassword.confirm ? (
-                  <FaEyeSlash />
+                  <EyeOff className="h-4 w-4" />
                 ) : (
-                  <FaEye />
+                  <Eye className="h-4 w-4" />
                 )}
               </button>
             </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-2">
             <button
               type="submit"
               disabled={loading}
-              className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+              className="rounded-xl bg-slate-900 px-6 py-3 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50 shadow-sm"
             >
-              {loading
-                ? "Changing..."
-                : "Change Password"}
+              {loading ? "Changing Password..." : "Update Password"}
             </button>
           </div>
         </form>
       </div>
 
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-8">
-        <h2 className="text-xl font-semibold text-red-600">
-          Danger Zone
-        </h2>
+      {/* Danger Zone */}
+      <div className="rounded-2xl border border-rose-200 bg-rose-50/50 p-6">
+        <div className="flex items-center gap-2 text-rose-700">
+          <AlertTriangle className="h-5 w-5" />
+          <h2 className="text-sm font-bold uppercase tracking-wider">
+            Danger Zone
+          </h2>
+        </div>
 
-        <p className="mt-2 text-sm text-slate-600">
-          Account deletion will be available in a future update.
+        <p className="mt-2 text-xs text-slate-600">
+          Account deletion features are managed by system administrators.
         </p>
 
         <button
           disabled
-          className="mt-6 rounded-xl bg-red-600 px-6 py-3 font-semibold text-white opacity-50"
+          className="mt-4 rounded-xl border border-rose-300 bg-white px-4 py-2.5 text-xs font-semibold text-rose-400 opacity-60 cursor-not-allowed"
         >
           Delete Account
         </button>

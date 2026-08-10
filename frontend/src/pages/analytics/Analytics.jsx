@@ -10,8 +10,10 @@ function Analytics() {
 
   if (loading) {
     return (
-      <div className="flex h-96 items-center justify-center">
-        Loading...
+      <div className="space-y-6 animate-pulse">
+        <div className="h-8 w-48 rounded-xl bg-slate-200" />
+        <div className="h-80 rounded-2xl bg-slate-200" />
+        <div className="h-80 rounded-2xl bg-slate-200" />
       </div>
     );
   }
@@ -19,10 +21,12 @@ function Analytics() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Analytics</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          Performance Analytics
+        </h1>
 
-        <p className="mt-2 text-slate-500">
-          Analyze your trading performance.
+        <p className="mt-1 text-sm text-slate-500">
+          In-depth analysis of cumulative growth, monthly returns, and strategy breakdown.
         </p>
       </div>
 
@@ -34,7 +38,7 @@ function Analytics() {
         <TradingCalendar />
 
         <StrategyPerformance
-          strategies={dashboard?.strategyPerformance}
+          strategies={dashboard?.strategyPerformance || []}
         />
       </div>
     </div>

@@ -1,9 +1,10 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import ProtectedRoute from "./ProtectedRoute";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
 
+import LandingPage from "../pages/LandingPage";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 
@@ -17,7 +18,6 @@ import TradeDetails from "../pages/trades/TradeDetails";
 import Profile from "../pages/profile/Profile";
 import Settings from "../pages/Settings";
 
-import { Navigate } from "react-router-dom";
 import { isAuthenticated } from "../utils/token";
 
 function AppRoutes() {
@@ -29,7 +29,7 @@ function AppRoutes() {
           isAuthenticated() ? (
             <Navigate to="/dashboard" replace />
           ) : (
-            <Navigate to="/login" replace />
+            <LandingPage />
           )
         }
       />

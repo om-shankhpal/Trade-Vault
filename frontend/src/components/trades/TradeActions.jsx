@@ -3,29 +3,29 @@ import { Link } from "react-router-dom";
 
 function TradeActions({ tradeId, onDelete }) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="inline-flex items-center gap-1">
       <Link
         to={`/trades/${tradeId}`}
-        className="text-blue-600 hover:text-blue-800"
-        title="View Trade"
+        className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition"
+        title="Inspect Trade"
       >
-        <Eye size={18} />
+        <Eye className="h-4 w-4" />
       </Link>
 
       <Link
         to={`/trades/${tradeId}/edit`}
-        className="text-amber-600 hover:text-amber-800"
+        className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-500 hover:bg-amber-50 hover:text-amber-700 transition"
         title="Edit Trade"
       >
-        <Pencil size={18} />
+        <Pencil className="h-4 w-4" />
       </Link>
 
       <button
         onClick={onDelete}
-        className="text-red-600 hover:text-red-800"
+        className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700 transition"
         title="Delete Trade"
       >
-        <Trash2 size={18} />
+        <Trash2 className="h-4 w-4" />
       </button>
     </div>
   );
